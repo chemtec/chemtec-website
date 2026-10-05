@@ -1,0 +1,14 @@
+[build]
+  publish = "."
+
+# Customer portal payments (5 Oct 2026): one function, /.netlify/functions/pay.
+# The Stripe key is never in the repo: it is the Netlify environment variable STRIPE_SECRET_KEY.
+[functions]
+  directory = "netlify/functions"
+
+# The site publishes from the repo root, so keep the function source off the public web.
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
