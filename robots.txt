@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://chemtecproductscompany.com/sitemap.xml
+Sitemap: https://chemtecpro.com/sitemap.xml
