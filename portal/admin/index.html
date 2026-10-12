@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portal admin | Chemtec Products Company</title>
+<meta name="description" content="Chemtec staff: logins for the customer portal.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://chemtecpro.com/portal/admin/">
+<meta name="theme-color" content="#ffffff">
+<meta name="referrer" content="same-origin">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/portal.css">
+<script src="/assets/portal-app.js" defer></script>
+<script src="/assets/portal-admin.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap">
+  <a class="brand" href="/" aria-label="Chemtec Products Company, home">
+    <img src="/assets/chemtec-cpc-logo-192.png" width="52" height="52" alt="Chemtec Products Company CPC logo">
+    <span class="brand-text"><b>Chemtec</b><small>Products Company</small></span>
+  </a>
+  <nav class="nav-desktop" aria-label="Main"><a href="/services/">Services</a><a href="/products/">Products</a><a href="/industries/">Industries</a><a href="/about/">About</a><a href="/documents/">Documents</a></nav>
+  <a class="btn btn-primary btn-head btn-quote" href="/contact/#quote"><span class="hide-sm">Request a quote</span><span class="show-sm">Quote</span></a>
+  <a class="btn btn-outline btn-head btn-portal" href="/portal/">Customer portal</a>
+  <details class="menu">
+    <summary aria-label="Open menu"><span class="bars" aria-hidden="true"></span>Menu</summary>
+    <nav class="menu-panel" aria-label="Mobile">
+      <a href="/">Home</a><a class="portal" href="/portal/">Customer portal</a><a href="/services/">Services</a><a href="/products/">Products</a><a href="/industries/">Industries</a><a href="/about/">About</a><a href="/documents/">Documents</a><a href="/contact/">Contact</a><a class="tel" href="tel:+12157211636">Call (215) 721-1636</a>
+    </nav>
+  </details>
+</div></header>
+<main id="main" data-admin-page>
+<section class="page-hero"><div class="wrap">
+  <p class="eyebrow">Customer portal &middot; Chemtec staff</p>
+  <h1>Portal <span class="accent">admin.</span></h1>
+  <p class="lead mb-0">Add customer logins, reset passwords and see exactly where it all lives on Netlify.</p>
+  <ul class="jump" aria-label="On this page"><li><a href="#logins">Logins</a></li><li><a href="#netlify">The Netlify side</a></li><li><a href="/portal/">Customer view</a></li><li><a href="/portal/change-password/">Change my password</a></li><li><a href="/portal/login/" data-logout>Log out</a></li></ul>
+</div></section>
+
+<section class="section" id="logins"><div class="wrap">
+  <noscript><p class="msg bad">The customer portal needs JavaScript turned on. Or call the office at <a href="tel:+12157211636">(215) 721-1636</a> and we will help you directly.</p></noscript>
+  <p class="muted js-only" data-view="loading">One moment...</p>
+  <p class="msg bad" data-admin-error role="alert" hidden></p>
+  <div data-view="in" hidden>
+    <div class="section-head">
+      <p class="eyebrow">A. Logins</p>
+      <h2>Add and manage logins.</h2>
+      <p>Customers log in with their account number. After you add someone or reset a password you get their Chemtec branded login email: the site sends it for you once automatic email is set up, or you copy it into a new email in Proton Mail. The plain message is there too. You are logged in as <b data-v="loginName"></b>.</p>
+    </div>
+
+    <div class="admin-grid">
+      <div class="admin-card">
+        <h3>Add a customer</h3>
+        <p>Name, email and account number. The account number is their username.</p>
+        <form class="form" data-add="customer" novalidate autocomplete="off">
+          <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
+          <div class="field"><label for="c-name">Name</label><input id="c-name" name="displayName" type="text" maxlength="80" required autocomplete="off"></div>
+          <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" maxlength="254" required autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label for="c-acct">Account number</label><span class="hint" id="c-acct-hint">This is their username. Letters, numbers, dashes and dots, up to 20. For example 0001.</span><input id="c-acct" name="accountNumber" type="text" maxlength="20" required autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="c-acct-hint"></div>
+          <div class="field"><label for="c-company">Company <span class="opt">(optional)</span></label><input id="c-company" name="company" type="text" maxlength="120" autocomplete="off"></div>
+          <details><summary>Set the temporary password yourself (optional)</summary>
+            <div class="field"><label for="c-pw">Temporary password</label><span class="hint">Leave it blank and the site makes a strong one. At least 10 characters.</span><input id="c-pw" name="password" type="text" maxlength="200" autocomplete="off" spellcheck="false"></div>
+          </details>
+          <div class="mail-opt" data-mail-opt>
+            <label class="check"><input type="checkbox" name="sendEmail" disabled> <span>Email the login now</span></label>
+            <span class="hint" data-mail-hint>Checking whether automatic email is set up...</span>
+          </div>
+          <button class="btn btn-primary" type="submit">Add customer</button>
+        </form>
+      </div>
+      <div class="admin-card">
+        <h3>Add an admin</h3>
+        <p>Admins can add customers and admins, reset passwords, and turn logins off or on.</p>
+        <form class="form" data-add="admin" novalidate autocomplete="off">
+          <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
+          <div class="field"><label for="a-user">Admin username</label><span class="hint" id="a-user-hint">3 to 40 characters, lowercase letters and numbers. A first name works.</span><input id="a-user" name="username" type="text" maxlength="40" required autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="a-user-hint"></div>
+          <div class="field"><label for="a-name">Name</label><input id="a-name" name="displayName" type="text" maxlength="80" required autocomplete="off"></div>
+          <div class="field"><label for="a-email">Email</label><input id="a-email" name="email" type="email" maxlength="254" required autocomplete="off" spellcheck="false"></div>
+          <details><summary>Set the temporary password yourself (optional)</summary>
+            <div class="field"><label for="a-pw">Temporary password</label><span class="hint">Leave it blank and the site makes a strong one. At least 10 characters.</span><input id="a-pw" name="password" type="text" maxlength="200" autocomplete="off" spellcheck="false"></div>
+          </details>
+          <div class="mail-opt" data-mail-opt>
+            <label class="check"><input type="checkbox" name="sendEmail" disabled> <span>Email the login now</span></label>
+            <span class="hint" data-mail-hint>Checking whether automatic email is set up...</span>
+          </div>
+          <button class="btn btn-primary" type="submit">Add admin</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="once" data-once tabindex="-1" hidden>
+      <h3 data-once-title>Login ready</h3>
+      <p class="muted mb-0" data-once-sub></p>
+      <div class="pw-line"><b>Temporary password</b><code class="pw" data-once-pw></code></div>
+      <p class="msg" data-once-send role="status" hidden></p>
+      <p class="envelope" data-once-envelope></p>
+      <div class="btn-row once-actions">
+        <button class="btn btn-primary" type="button" data-once-send-btn hidden>Send branded email</button>
+        <button class="btn btn-outline" type="button" data-once-copy-html>Copy branded email</button>
+        <a class="btn btn-outline" data-once-mail href="#">Open in my email app (plain text)</a>
+        <button class="btn btn-outline" type="button" data-once-copy>Copy message</button>
+      </div>
+      <p class="warn" data-once-status role="status" aria-live="polite"></p>
+      <p class="preview-toggle"><button class="link-btn" type="button" data-once-preview-btn aria-expanded="false" aria-controls="once-preview">Preview the branded email</button></p>
+      <div class="preview" id="once-preview" data-once-preview hidden>
+        <div class="preview-bar"><span class="preview-subject" data-once-subject></span><span class="preview-sizes" role="group" aria-label="Preview width"><button type="button" data-preview-width="computer" aria-pressed="true">Computer</button><button type="button" data-preview-width="phone" aria-pressed="false">Phone</button></span></div>
+        <div class="preview-stage"><iframe title="Preview of the branded login email" data-once-frame sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe></div>
+      </div>
+      <label class="small" for="once-msg"><b>Their login message (plain text)</b></label>
+      <textarea id="once-msg" data-once-msg readonly></textarea>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-outline" type="button" data-once-done>Done, hide it</button>
+      </div>
+      <p class="warn">Shown once. The site keeps only a scrambled copy of the password and cannot show it again; if it is lost, reset the password. Copy branded email puts the Chemtec email on your clipboard: paste it into a new email in Proton Mail, add their address and the subject shown above, and send it. Open in my email app starts a plain text email instead. They choose their own password the first time they log in.</p>
+    </div>
+
+    <div class="section-tools" style="margin-top:40px">
+      <h3 class="mb-0">All logins</h3>
+      <span class="doc-count" data-count></span>
+      <button class="btn btn-outline" type="button" data-refresh>Refresh</button>
+    </div>
+    <p class="msg" data-row-msg role="status" tabindex="-1" hidden></p>
+    <div class="table-wrap">
+      <table class="utable">
+        <thead><tr><th scope="col">Login</th><th scope="col">Name and company</th><th scope="col">Email</th><th scope="col">Status</th><th scope="col">Last log in</th><th scope="col">Actions</th></tr></thead>
+        <tbody data-users></tbody>
+      </table>
+    </div>
+  </div>
+</div></section>
+
+<section class="section soft" id="netlify"><div class="wrap">
+  <div data-view="in" hidden>
+    <div class="section-head">
+      <p class="eyebrow">B. The Netlify side</p>
+      <h2>Where this lives.</h2>
+      <p>Plain words first, then the exact Netlify name or call in code type.</p>
+    </div>
+    <div class="lives">
+      <div><div><b>The website and the portal</b><p>Run on Netlify, in the project chemtecpro.</p></div><div class="mono" data-site>Netlify project: chemtecpro</div></div>
+      <div><div><b>Where logins are kept</b><p>A private Netlify Blobs store called portal-users. One record per login, filed under the account number (an admin under their username), in lowercase.</p></div><div class="mono">getStore({ name: "portal-users", consistency: "strong" })<br>store portal-users, key = account number in lowercase, for example 0001</div></div>
+      <div><div><b>Passwords</b><p>Kept only as a scrambled one way hash. Nobody can read a password back, not even on this page.</p></div><div class="mono">node:crypto scrypt (N=32768, r=8, p=1), random 16 byte salt, field passwordHash</div></div>
+      <div><div><b>Login emails</b><p>The Chemtec branded login email. The site sends it through Resend only when automatic email is set up (RESEND_API_KEY) and you tick Email the login now or press Send; otherwise you copy it into your own email. The temporary password goes into that one email and is never kept. Up to 30 sends an hour per admin.</p></div><div class="mono">netlify/lib/email-templates.mjs (the email) and netlify/lib/mailer.mjs (the send)<br>POST https://api.resend.com/emails, Authorization: Bearer &lt;RESEND_API_KEY&gt;<br>from PORTAL_FROM, reply_to PORTAL_REPLY_TO<br>store portal-mail, key sends-&lt;admin username&gt; (send times only)</div></div>
+      <div><div><b>Staying logged in</b><p>A signed cookie that lasts 8 hours. Turning a login off, resetting it or deleting it ends its sessions at once. 10 wrong passwords lock that login for 15 minutes.</p></div><div class="mono">cookie __Host-chemtec_session, HMAC SHA-256 signed with SESSION_SECRET; HttpOnly, Secure, SameSite=Lax, Path=/</div></div>
+      <div><div><b>The code that does the work</b><p>Netlify Functions, each at its own address on the site.</p></div><ul class="mono envs">
+          <li><span>POST /api/login</span><span>netlify/functions/login.mjs</span></li>
+          <li><span>POST /api/logout</span><span>netlify/functions/logout.mjs</span></li>
+          <li><span>GET /api/me</span><span>netlify/functions/me.mjs</span></li>
+          <li><span>POST /api/change-password</span><span>netlify/functions/change-password.mjs</span></li>
+          <li><span>GET, POST /api/admin/users</span><span>netlify/functions/admin-users.mjs</span></li>
+          <li><span>POST /api/admin/users/:username/reset | disable | enable | email</span><span>netlify/functions/admin-users.mjs</span></li>
+          <li><span>DELETE /api/admin/users/:username</span><span>netlify/functions/admin-users.mjs</span></li>
+          <li><span>GET /api/admin/store</span><span>netlify/functions/admin-store.mjs</span></li>
+          <li><span>GET /api/documents</span><span>netlify/functions/documents.mjs</span></li>
+          <li><span>GET, POST /.netlify/functions/pay</span><span>netlify/functions/pay.mjs</span></li>
+        </ul></div>
+      <div><div><b>The gate in front of the documents</b><p>A Netlify Edge Function checks the login before any PDF, the old documents page or this admin page is served. No login, no file.</p></div><div class="mono">netlify/edge-functions/portal-gate.mjs, path /* (only the site's own styles, scripts, images and video in /assets/ skip it; nothing in /assets/docs/ does)</div></div>
+      <div><div><b>Settings</b><p>Netlify environment variables, in the Netlify project under Project configuration, Environment variables. Only the names are shown here, never the values.</p></div><ul class="mono envs" data-envs><li><span>Loading...</span></li></ul></div>
+    </div>
+
+    <h3 style="margin:44px 0 6px">What you did this session</h3>
+    <p class="muted">Each action on this page, with the Netlify call behind it. Kept in this browser tab only, and never with a password.</p>
+    <ul class="log" data-log></ul>
+    <p class="log-empty" data-log-empty>Nothing yet. Add a login or reset a password and it shows here.</p>
+
+    <div class="section-tools" style="margin-top:44px">
+      <h3 class="mb-0">What is in the store</h3>
+      <button class="btn btn-outline" type="button" data-store-refresh>Refresh</button>
+    </div>
+    <p class="muted" data-store-sum></p>
+    <div class="table-wrap">
+      <table class="utable">
+        <thead><tr><th scope="col">Key</th><th scope="col">Role</th><th scope="col">Status</th><th scope="col">Size</th><th scope="col">Updated</th><th scope="col">Fields stored</th></tr></thead>
+        <tbody data-store></tbody>
+      </table>
+    </div>
+    <p class="mono" style="margin-top:10px" data-store-call></p>
+  </div>
+</div></section>
+</main>
+<footer class="site-footer"><div class="wrap">
+  <div class="footer-rule"></div>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand"><img src="/assets/chemtec-cpc-logo-192.png" width="56" height="56" alt=""><span><b>Chemtec Products Company</b><small>Since 1982 &middot; Veteran owned</small></span></div>
+      <p>Industrial water treatment sales and service</p>
+    </div>
+    <div>
+      <h3>Call or email</h3>
+      <ul>
+        <li><a href="tel:+12157211636">Office (215) 721-1636</a></li>
+        <li><a class="email-1line" href="mailto:service@chemtecproductscompany.com">service@chemtecproductscompany.com</a></li>
+        <li><a href="/contact/#quote">Quotes and requests: use the contact form</a></li>
+              </ul>
+    </div>
+    <div>
+      <h3>Pages</h3>
+      <ul>
+        <li><a href="/services/">Water treatment services</a></li>
+        <li><a href="/products/">Products</a></li>
+        <li><a href="/documents/">SDS, manuals and bulletins</a></li>
+        <li><a href="/industries/">Industries</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/dapper/">The founder</a></li>
+        <li><a href="/contact/">Contact and quotes</a></li>
+        <li><a href="/portal/">Customer portal</a></li>
+      </ul>
+    </div>
+  </div>
+<div class="footer-bot"><span>&copy; 2026 Chemtec Products Company LLC. Souderton, Pennsylvania.</span><span class="apex-credit"><a href="https://apex-solved.com/?utm_source=client-credit&amp;utm_medium=referral&amp;utm_campaign=chemtec" style="color:inherit;text-decoration:none;" rel="noopener">Site by Apex Solved</a></span></div>
+</div></footer>
+<div class="callbar" role="region" aria-label="Quick contact">
+  <a class="btn btn-primary" href="tel:+12157211636">Call (215) 721-1636</a>
+  <a class="btn btn-outline" href="/contact/#quote">Get a quote</a>
+</div>
+<script>/* close the phone menu on Escape or an outside tap */(function(){var m=document.querySelector('.menu');if(!m)return;document.addEventListener('keydown',function(e){if(e.key==='Escape'&&m.open){m.open=false;m.querySelector('summary').focus();}});document.addEventListener('click',function(e){if(m.open&&!m.contains(e.target))m.open=false;});})();</script>
+</body>
+</html>

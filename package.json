@@ -1,0 +1,9 @@
+{
+  "name": "chemtec-website",
+  "private": true,
+  "description": "Chemtec Products Company website and customer portal. Static pages plus Netlify Functions; no build step.",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "10.7.0"
+  }
+}

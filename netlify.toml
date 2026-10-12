@@ -3,14 +3,71 @@
 [build]
   publish = "."
 
-# Customer portal payments (5 Oct 2026): one function, /.netlify/functions/pay.
-# The Stripe key is never in the repo: it is the Netlify environment variable STRIPE_SECRET_KEY.
+# Customer portal (5 Oct 2026, logins 8 Oct 2026). No secret is ever in the repo; they are Netlify environment
+# variables: STRIPE_SECRET_KEY (payments), SESSION_SECRET, ADMIN_USERNAME and ADMIN_PASSWORD (logins).
+#   functions        netlify/functions/   pay (/.netlify/functions/pay) and the portal API under /api/
+#   edge function    netlify/edge-functions/portal-gate.mjs   guards the PDFs, /documents/ and /portal/admin/
+#   shared code      netlify/lib/
+#   logins           Netlify Blobs, store "portal-users" (package @netlify/blobs, see package.json);
+#                    key = a customer's account number (their username) or an admin's username, in lowercase
+#   pages            /portal/ (log in, then Pay on top and Documents underneath), /portal/login/,
+#                    /portal/change-password/, /portal/admin/ (admins: add users, reset, the Netlify side)
+# The PDFs and /documents/ are out of sitemap.xml: they are for logged in customers only.
 [functions]
   directory = "netlify/functions"
 
-# The site publishes from the repo root, so keep the function source off the public web.
+# The site publishes from the repo root, so keep the code and package files off the public web.
 [[redirects]]
   from = "/netlify/*"
   to = "/404"
   status = 404
   force = true
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.env"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/deno.lock"
+  to = "/404"
+  status = 404
+  force = true
+
+# Portal pages: never framed by another site, never indexed, and scripts only from this site (plus the one
+# small inline script that closes the phone menu, allowed by its hash; change that script and the hash must change).
+# img-src also names the host the branded login email takes its logo from (ASSET_BASE in
+# netlify/lib/email-templates.mjs), so the email's preview on the admin page shows it.
+[[headers]]
+  for = "/portal/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "same-origin"
+    X-Robots-Tag = "noindex"
+    X-Content-Type-Options = "nosniff"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-Gy+zhhZkvVcMPAc7+F3oU1Hpt9irPZNAwlIZcg5gVTk='; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://chemtecpro.com; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"

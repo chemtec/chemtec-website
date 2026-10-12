@@ -1,0 +1,128 @@
+/* Chemtec customer portal: log in, the customer page and the admin page (8 Oct 2026).
+   Loaded after site.css on the portal pages only. White and black; the CPC drop's aqua, teal and deep are accents. */
+:root{--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--bad:#B3261E;--bad-bg:#FBF2F1;--ok:#0E6E4A;--ok-bg:#EEF7F2}
+[hidden]{display:none!important}
+
+/* the log in and password cards */
+.auth-grid{display:grid;gap:16px;align-items:start}
+@media (min-width:900px){.auth-grid{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px}}
+.auth-card{border:1px solid var(--line);border-top:3px solid var(--ink);border-radius:var(--radius);padding:24px;background:#fff}
+.auth-card h2{font-size:clamp(1.5rem,4.4vw,2rem);margin-bottom:8px}
+.auth-card .form{margin-top:18px}
+.field .hint{display:block;font-size:.84rem;color:var(--muted);margin:-2px 0 6px;font-weight:500}
+.field select{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:#fff;border:1.5px solid #bdbdbd;border-radius:var(--radius);padding:12px 14px;min-height:50px}
+.show-pw{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);margin-top:-4px}
+.show-pw input{width:18px;height:18px;margin:0;accent-color:var(--teal)}
+.msg{border-left:3px solid var(--teal);background:var(--soft);color:var(--ink);padding:12px 16px;margin:0;font-size:.95rem}
+.msg.bad{border-left-color:var(--bad);background:var(--bad-bg)}
+.msg.good{border-left-color:var(--ok);background:var(--ok-bg)}
+.msg:focus{outline:none}
+.form .btn:disabled,.btn[aria-disabled="true"],button.btn:disabled{opacity:.6;cursor:not-allowed}
+
+/* the customer page */
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0;padding:0;list-style:none}
+.jump a{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;border:1.5px solid rgba(255,255,255,.55);border-radius:999px;color:#fff;text-decoration:none;font-weight:700;font-size:.92rem}
+.jump a:hover{background:#fff;color:var(--ink)}
+.who{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0;font-size:1.02rem}
+.who b{font-weight:700}
+.pay-cards{display:grid;gap:16px}
+@media (min-width:860px){.pay-cards{grid-template-columns:1.25fr .75fr}}
+.pay-main{border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:var(--radius);padding:24px;background:#fff;display:flex;flex-direction:column}
+.pay-main h3{font-size:1.45rem;margin-bottom:8px}
+.pay-main p{color:var(--muted);margin:0}
+.pay-main .btn-row{margin-top:20px}
+.pay-main .soon-tag{display:inline-block;align-self:flex-start;background:rgba(80,192,208,.16);color:var(--deep);border:1px solid var(--teal);font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:3px;margin:0 0 14px}
+.doc-tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:0 0 6px}
+.doc-tools .sds-find{margin:0}
+.doc-count{font-size:.9rem;color:var(--muted)}
+.doc-group{margin-top:30px}
+.doc-group h3{font-size:1.15rem;margin-bottom:4px}
+.doc-group>p{color:var(--muted);font-size:.95rem;margin:0 0 12px}
+@media (min-width:640px){.sds-grid.two-col{grid-template-columns:1fr 1fr}}
+@media (min-width:1000px){.sds-grid.two-col{grid-template-columns:1fr 1fr 1fr}}
+.acct-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.acct-row .btn{flex:0 0 auto}
+.link-btn{background:none;border:0;padding:0;font:inherit;color:var(--deep);text-decoration:underline;text-decoration-color:var(--aqua);text-decoration-thickness:2px;text-underline-offset:3px;cursor:pointer}
+
+/* the admin page */
+.admin-grid{display:grid;gap:16px;align-items:start}
+@media (min-width:980px){.admin-grid{grid-template-columns:1fr 1fr}}
+.admin-card{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:#fff}
+.admin-card h3{font-size:1.2rem;margin-bottom:6px}
+.admin-card>p{color:var(--muted);font-size:.95rem;margin:0 0 14px}
+.admin-card details{margin-top:4px}
+.admin-card summary{cursor:pointer;font-size:.92rem;font-weight:600;color:var(--deep)}
+.admin-card details .field{margin-top:10px}
+.once{border:2px solid var(--teal);border-radius:var(--radius);background:#fff;padding:22px;margin-top:16px}
+.once h3{font-size:1.2rem;margin-bottom:6px}
+.once .pw-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:12px 0}
+.once .pw{font-family:var(--mono);font-size:1.25rem;font-weight:700;letter-spacing:.04em;background:var(--soft);border:1px dashed var(--teal);border-radius:var(--radius);padding:8px 12px;color:var(--ink);user-select:all}
+.once textarea{width:100%;min-height:210px;font-family:var(--mono);font-size:.88rem;line-height:1.5;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:12px;resize:vertical}
+.once .btn-row .btn{flex:0 1 auto}
+.once .warn{font-size:.88rem;color:var(--muted);margin:10px 0 0}
+/* branded email (8 Oct): the send result, To and Subject, the four ways, the preview */
+.once [data-once-send]{margin:4px 0 12px}
+.once .envelope{font-size:.9rem;color:var(--muted);margin:0 0 12px;overflow-wrap:anywhere}
+.once .once-actions{max-width:none}
+.once .once-actions .btn{flex:1 1 230px}
+.once .preview-toggle{margin:12px 0 0}
+.once .preview{margin:12px 0 18px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--soft)}
+.once .preview-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line);font-size:.86rem;color:var(--muted)}
+.once .preview-subject{font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.once .preview-sizes{display:inline-flex;gap:6px}
+.once .preview-sizes button{font:inherit;font-size:.8rem;font-weight:700;min-height:32px;padding:0 10px;border-radius:var(--radius);border:1.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer}
+.once .preview-sizes button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.once .preview-stage{display:flex;justify-content:center;background:var(--soft)}
+.once .preview iframe{display:block;width:100%;height:820px;border:0;background:var(--soft)}
+.once .preview[data-width="phone"] iframe{max-width:390px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.mail-opt{display:grid;gap:2px;margin:2px 0 0}
+.check{display:flex;align-items:center;gap:10px;font-size:.95rem;font-weight:700;color:var(--ink);cursor:pointer}
+.check input{width:20px;height:20px;margin:0;accent-color:var(--deep);flex:0 0 auto}
+.mail-opt.off .check{color:var(--muted);cursor:not-allowed}
+.mail-opt .hint{display:block;font-size:.84rem;font-weight:500;color:var(--muted);margin:0}
+.utable .acts .confirm-mail{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:var(--ink);white-space:nowrap}
+.utable .acts .confirm-mail input{width:16px;height:16px;margin:0;accent-color:var(--deep)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:#fff;-webkit-overflow-scrolling:touch}
+.utable{width:100%;border-collapse:collapse;font-size:.92rem;min-width:860px}
+.utable th,.utable td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.utable th{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--soft);font-weight:700;white-space:nowrap}
+.utable tr:last-child td{border-bottom:0}
+.utable .login{font-weight:800;color:var(--ink);white-space:nowrap}
+.utable .sub{display:block;font-size:.82rem;color:var(--muted)}
+.utable .acts{display:flex;flex-wrap:wrap;gap:6px}
+.utable .acts button{font:inherit;font-size:.82rem;font-weight:700;min-height:34px;padding:0 10px;border-radius:var(--radius);border:1.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;white-space:nowrap}
+.utable .acts button:hover{background:var(--ink);color:#fff}
+.utable .acts button.danger{border-color:var(--bad);color:var(--bad)}
+.utable .acts button.danger:hover{background:var(--bad);color:#fff}
+.utable .acts button:disabled{opacity:.45;cursor:not-allowed;background:#fff;color:var(--ink)}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;margin:0 4px 4px 0}
+.pill.on{border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.pill.off{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+.pill.warn{border-color:var(--teal);color:var(--deep);background:rgba(80,192,208,.14)}
+.pill.admin{border-color:var(--deep);color:#fff;background:var(--deep)}
+.mono{font-family:var(--mono);font-size:.82rem;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.lives{display:grid;gap:0;border-top:2px solid var(--ink)}
+.lives>div{display:grid;gap:4px 24px;padding:16px 0;border-bottom:1px solid var(--line)}
+@media (min-width:860px){.lives>div{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
+.lives b{display:block;color:var(--ink);margin-bottom:2px}
+.lives p{margin:0;color:var(--muted);font-size:.95rem}
+.lives .mono{background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;align-self:start}
+.envs{list-style:none;margin:0;padding:0}
+.envs li{display:grid;grid-template-columns:minmax(0,1fr);gap:0 14px;padding:4px 0;border-bottom:1px dashed var(--line)}
+.envs li:last-child{border-bottom:0}
+.envs li span+span{color:var(--muted)}
+@media (min-width:600px){.envs li{grid-template-columns:minmax(150px,auto) minmax(0,1fr)}}
+.log{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.log li{padding:14px 0;border-bottom:1px solid var(--line)}
+.log .when{font-size:.8rem;color:var(--muted);font-weight:600}
+.log .what{display:block;color:var(--ink);font-weight:700;margin:2px 0 8px}
+.log .mono{display:block;background:var(--soft);border:1px solid var(--line);border-radius:var(--radius);padding:8px 10px;margin-top:6px}
+.log .mono i{font-style:normal;color:var(--muted);font-family:'Inter',system-ui,sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:2px}
+.log-empty{color:var(--muted);margin:12px 0 0}
+.section-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px}
+.section-tools .btn{min-height:40px;padding:0 14px;font-size:.9rem}
+.confirm-q{font-size:.82rem;font-weight:700;color:var(--bad);align-self:center}
+
+/* service@ stays on one line (Kyle, 3 Oct) and scales down on narrow phones inside the portal cards */
+.pay-cards>*,.auth-grid>*,.admin-grid>*{min-width:0}
+.card .email-1line,.auth-card .email-1line,.section .msg .email-1line{font-size:min(1rem,3.9vw)}

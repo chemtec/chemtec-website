@@ -149,6 +149,14 @@
 
     // coming back with the browser's back button after leaving for Stripe
     window.addEventListener('pageshow', function () { busy(false); });
+
+    // a logged in customer (8 Oct 2026): fill in their company and account number, if the boxes are empty
+    getJSON('/api/me', 6000).then(function (res) {
+      var u = res && res.ok && res.data && res.data.loggedIn && res.data.user;
+      if (!u || u.role !== 'customer') return;
+      if (form.company && !form.company.value && u.company) form.company.value = u.company;
+      if (form.account && !form.account.value && u.accountNumber) form.account.value = u.accountNumber;
+    });
   }
 
   // ---- the thank you page ----

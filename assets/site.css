@@ -263,7 +263,7 @@ a.row:hover h3{color:var(--teal)}
 .def{padding:20px 0;border-bottom:1px solid var(--line)}
 .def dt{font-weight:800;color:var(--ink);font-size:1.1rem;margin-bottom:4px}
 .def dd{margin:0;color:var(--muted)}
-@media (min-width:768px){.defs{grid-template-columns:1fr 1fr;column-gap:48px}}
+@media (min-width:768px){.defs{grid-template-columns:1fr 1fr;column-gap:48px}.defs>.def:last-child:nth-child(odd){grid-column:1/-1}.defs>.def:last-child:nth-child(odd) dd{max-width:70ch}}
 
 /* Timeline (about) */
 .timeline{list-style:none;margin:0;padding:0;border-left:3px solid var(--ink)}
@@ -334,8 +334,8 @@ a.row:hover h3{color:var(--teal)}
 .site-footer address{font-style:normal;line-height:1.55}
 .footer-bot{border-top:1px solid var(--line);margin-top:18px;padding-top:12px;font-size:.82rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between}
 .footer-rule{height:3px;width:64px;background:var(--aqua);margin-bottom:20px}
-@media (min-width:640px){.footer-grid{grid-template-columns:1fr 1fr}}
-@media (min-width:1000px){.footer-grid{grid-template-columns:1.6fr 1fr 1fr 1fr}}
+@media (min-width:640px){.footer-grid{grid-template-columns:1fr 1fr}.footer-grid>:first-child{grid-column:1/-1}}
+@media (min-width:1000px){.footer-grid{grid-template-columns:1.6fr 1fr 1fr}.footer-grid>:first-child{grid-column:auto}}
 @media (max-width:767px){.site-footer{padding-bottom:calc(28px + 72px + env(safe-area-inset-bottom))}}
 
 /* Sticky mobile call bar */
@@ -384,13 +384,6 @@ a.row:hover h3{color:var(--teal)}
   .trust{gap:8px 18px;font-size:.74rem;letter-spacing:.12em}
   .trust li::before,.trust li + li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--aqua);margin:0 8px 0 0}
 }
-
-/* service areas, every page, above the legal line. Plain text for the crawlers, quiet for people. */
-.footer-areas{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 22px}
-.footer-areas h3{margin:0}
-.footer-areas ul{display:flex;flex-wrap:wrap;gap:6px 18px;list-style:none;margin:0;padding:0}
-.footer-areas li{color:var(--muted);font-size:.88rem;line-height:1.5;margin:0}
-.footer-areas li b{color:var(--ink);font-weight:600}
 
 /* the service@ address on one line, every page (Kyle, 25 Sep): never wraps, a touch smaller, and it scales down on the narrowest phones so it always fits */
 .email-1line{white-space:nowrap}
