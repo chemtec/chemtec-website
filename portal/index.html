@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Customer portal | Chemtec Products Company</title>
-<meta name="description" content="The Chemtec Products Company customer portal: pay your invoice online and get the safety data sheets for your products.">
+<meta name="description" content="The Chemtec Products Company customer portal: pay your invoice online, see your invoices and reports, and get the safety data sheets for your products.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://chemtecpro.com/portal/">
 <meta name="theme-color" content="#ffffff">
@@ -42,16 +42,16 @@
   <p class="eyebrow">Customer portal</p>
   <div data-view="loading">
     <h1>Customer <span class="accent">portal.</span></h1>
-    <p class="lead mb-0">Pay your invoice online and get the safety data sheets for your products.</p>
+    <p class="lead mb-0">Pay your invoice online, see your invoices and reports, and get the safety data sheets for your products.</p>
   </div>
   <div data-view="out" hidden>
     <h1>Customer <span class="accent">portal.</span></h1>
-    <p class="lead mb-0">Log in to pay your invoice online and to get the safety data sheets, manuals and bulletins for your products.</p>
+    <p class="lead mb-0">Log in to pay your invoice online, to see your invoices and reports, and to get the safety data sheets, manuals and bulletins for your products.</p>
   </div>
   <div data-view="in" hidden>
     <h1>Welcome, <span class="accent" data-v="firstName"></span>.</h1>
     <p class="who"><span data-if="company" hidden><b data-v="company"></b></span><span data-if="account" hidden>Account number <b data-v="loginName"></b></span></p>
-    <ul class="jump" aria-label="On this page"><li><a href="#pay">Pay</a></li><li><a href="#documents">Documents</a></li><li><a href="#your-login">Your login</a></li><li data-if="admin" hidden><a href="/portal/admin/">Admin page</a></li></ul>
+    <ul class="jump" aria-label="On this page"><li><a href="#pay">Pay</a></li><li data-if="customer" hidden><a href="#invoices">Invoices</a></li><li data-if="customer" hidden><a href="#reports">Reports</a></li><li><a href="#documents">Safety data sheets</a></li><li><a href="#your-login">Your login</a></li><li data-if="admin" hidden><a href="/portal/admin/">Admin page</a></li></ul>
   </div>
 </div></section>
 
@@ -88,7 +88,7 @@
   <p class="muted js-only">One moment...</p>
 </div></section>
 
-<section class="section" id="pay" data-view="in" hidden><div class="wrap">
+<section class="section pay-section" id="pay" data-view="in" hidden><div class="wrap">
   <p class="msg bad" data-notice role="status" hidden></p>
   <div class="section-head">
     <p class="eyebrow">Pay</p>
@@ -114,19 +114,51 @@
   </div>
 </div></section>
 
-<section class="section soft" id="documents" data-view="in" hidden><div class="wrap">
-  <div class="section-head">
-    <p class="eyebrow">Documents</p>
-    <h2>Safety data sheets, manuals and bulletins.</h2>
-    <p>Type a product code to find it. Tap a sheet to open the PDF.</p>
+<!-- v1.2 (22 Oct 2026): right below Pay, two columns: Invoices on the left, Reports on the right (a phone stacks them,
+     Invoices first). Below them the safety data sheets, manuals and bulletins in an accordion, closed until opened. -->
+<section class="section files-section" id="your-documents" data-view="in" hidden aria-label="Your invoices and reports"><div class="wrap">
+  <p class="muted" data-files-status role="status">Loading your invoices and reports...</p>
+  <div class="files-cols" data-files-cols hidden>
+    <section class="files-col invoices" id="invoices" aria-labelledby="invoices-title">
+      <div class="files-col-head"><h2 id="invoices-title">Invoices</h2><span class="files-n" data-files-n="invoice"></span></div>
+      <p class="files-note">PDF copies of your invoices from Chemtec. Newest first. Tap one to open it.</p>
+      <ul class="files-list" data-files="invoice" hidden></ul>
+      <p class="files-empty" data-files-empty="invoice" hidden>No invoices here yet. When we add an invoice for your account, it shows here.</p>
+      <button class="link-btn files-more" type="button" data-files-more="invoice" hidden></button>
+    </section>
+    <section class="files-col reports" id="reports" aria-labelledby="reports-title">
+      <div class="files-col-head"><h2 id="reports-title">Reports</h2><span class="files-n" data-files-n="report"></span></div>
+      <p class="files-note">Field Service Reports, boiler reports and test sheets. Newest first. Tap one to open it.</p>
+      <ul class="files-list" data-files="report" hidden></ul>
+      <p class="files-empty" data-files-empty="report" hidden>No reports here yet. When we add a Field Service Report, a boiler report or a test sheet for your account, it shows here.</p>
+      <button class="link-btn files-more" type="button" data-files-more="report" hidden></button>
+    </section>
   </div>
-  <div class="doc-tools">
-    <input class="sds-find" type="search" data-docs-find placeholder="Find a product, for example B-110" aria-label="Find a document" autocomplete="off">
-    <span class="doc-count" data-docs-count aria-live="polite"></span>
-  </div>
-  <p class="muted" data-docs-status>Loading the documents...</p>
-  <div data-docs></div>
-  <p class="sds-none" data-docs-none hidden>Nothing matches that. Call <a href="tel:+12157211636">(215) 721-1636</a> and we will send it.</p>
+  <p class="files-help" data-files-help hidden>For your account only. Questions about a document? Call <a href="tel:+12157211636">(215) 721-1636</a>.</p>
+  <p class="files-empty" data-files-admin hidden>You are logged in as an admin. Customer invoices and reports are on the <a href="/portal/admin/#customer-documents">admin page</a>.</p>
+</div></section>
+
+<section class="section soft sds-section" id="documents" data-view="in" hidden><div class="wrap">
+  <details class="sds-acc" data-docs-acc>
+    <summary>
+      <span class="acc-main">
+        <span class="k">Documents</span>
+        <h2>Safety data sheets, manuals and bulletins</h2>
+        <span class="acc-count" data-docs-total>Loading the list...</span>
+      </span>
+      <span class="acc-act" aria-hidden="true"><span class="acc-show">Show</span><span class="acc-hide">Hide</span><span class="acc-icon"></span></span>
+    </summary>
+    <div class="acc-body">
+      <p class="acc-lead">Type a product code to find it. Tap a sheet to open the PDF.</p>
+      <div class="doc-tools">
+        <input class="sds-find" type="search" data-docs-find placeholder="Find a product, for example B-110" aria-label="Find a document" autocomplete="off">
+        <span class="doc-count" data-docs-count aria-live="polite"></span>
+      </div>
+      <p class="muted" data-docs-status>Loading the documents...</p>
+      <div data-docs></div>
+      <p class="sds-none" data-docs-none hidden>Nothing matches that. Call <a href="tel:+12157211636">(215) 721-1636</a> and we will send it.</p>
+    </div>
+  </details>
 </div></section>
 
 <section class="section" id="your-login" data-view="in" hidden><div class="wrap">
@@ -141,6 +173,7 @@
     <button class="btn btn-outline" type="button" data-logout>Log out</button>
   </div>
 </div></section>
+
 </main>
 <footer class="site-footer"><div class="wrap">
   <div class="footer-rule"></div>
