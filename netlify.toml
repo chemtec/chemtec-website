@@ -10,6 +10,9 @@
 #   shared code      netlify/lib/
 #   logins           Netlify Blobs, store "portal-users" (package @netlify/blobs, see package.json);
 #                    key = a customer's account number (their username) or an admin's username, in lowercase
+#   documents        (9 Oct 2026) Netlify Blobs, store "portal-files": test sheets and invoices (PDF, up to 4 MB), each
+#                    for one customer login; read only by netlify/functions/files.mjs (a customer's own) and
+#                    admin-files.mjs (admins: upload, open, delete). Never served as a public file.
 #   pages            /portal/ (log in, then Pay on top and Documents underneath), /portal/login/,
 #                    /portal/change-password/, /portal/admin/ (admins: add users, reset, the Netlify side)
 # The PDFs and /documents/ are out of sitemap.xml: they are for logged in customers only.
