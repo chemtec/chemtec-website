@@ -19,6 +19,8 @@
 // email, rendered for this login: subject, html, pasteHtml, text) for Copy branded email and the preview, and with
 // `emailSend`, the outcome of the automatic send. With { sendEmail: true } and RESEND_API_KEY set, the SAME request
 // sends it through Resend (../lib/mailer.mjs); without the key nothing is sent and emailSend says so.
+// Documents (9 Oct 2026): the list gives each customer's document count (`documents`), and deleting a customer's login
+// also removes their documents (../lib/files.mjs), so an account number added again later never sees old files.
 // Built by Apex Solved for Chemtec Products Company, 8 Oct 2026.
 
 import {
@@ -49,6 +51,7 @@ import {
 } from "../lib/portal.mjs";
 import { renderLoginEmail, kindFor } from "../lib/email-templates.mjs";
 import { sendLoginEmail, mailConfigured, MAIL_NOT_SET_UP } from "../lib/mailer.mjs";
+import { countDocsByOwner, deleteAllDocs } from "../lib/files.mjs";
 
 const LAST_ADMIN = { error: "This is the last active admin. Add another admin first." };
 
@@ -74,9 +77,16 @@ async function sendIfAsked(body, email, rec, admin) {
 
 async function list(context) {
   const all = await listUsers();
+  let counts = null;
+  try {
+    counts = await countDocsByOwner();
+  } catch (err) {
+    console.error(`[portal] could not count documents (${(err && err.name) || "error"})`); // the logins still list
+  }
   const users = all
     .map((r) => publicUser(r.data))
     .filter(Boolean)
+    .map((u) => (u.role === "customer" && counts ? { ...u, documents: counts[u.username] || 0 } : u))
     .sort((a, b) => (a.role === b.role ? a.username.localeCompare(b.username, "en", { numeric: true }) : a.role === "admin" ? -1 : 1));
   return json(200, { users, mail: mailState(), call: netlifyCall(context, "list") });
 }
@@ -265,6 +275,12 @@ async function remove(context, admin, username) {
   if (!target) return json(404, { error: "There is no login with that account number or username." });
   if (username === admin.username) return json(400, { error: "You cannot delete your own login." });
   if (target.role === "admin" && target.active === true && (await activeAdminCount()) <= 1) return json(400, LAST_ADMIN);
+  // a customer's invoices and reports go FIRST: if that fails, the login is still there and the admin can try again
+  let documentsDeleted = 0;
+  if (target.role === "customer") {
+    documentsDeleted = await deleteAllDocs(username);
+    if (documentsDeleted) console.log(`[portal] ${documentsDeleted} document(s) deleted with the login ${username} by ${admin.username}`);
+  }
   await store().delete(username);
   if (target.role === "admin" && target.active === true && (await activeAdminCount()) < 1) {
     // another admin was removed or turned off at the same moment: put this one back so an admin is always on
@@ -273,7 +289,7 @@ async function remove(context, admin, username) {
     return json(409, LAST_ADMIN);
   }
   console.log(`[portal] login deleted: ${username} by ${admin.username}`);
-  return json(200, { ok: true, deleted: username, loginName: loginName(target), call: netlifyCall(context, "delete", username) });
+  return json(200, { ok: true, deleted: username, loginName: loginName(target), documentsDeleted, call: netlifyCall(context, "delete", username) });
 }
 
 export default guarded(async (req, context) => {
