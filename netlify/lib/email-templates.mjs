@@ -253,7 +253,18 @@ export function renderLoginEmail({ kind, user, password, assetBase } = {}) {
   const pw = String(password ?? "");
   const subject = SUBJECTS[kind];
   const preheader = PREHEADERS[kind];
-  const html = `<!DOCTYPE html>
+  const html = pageHtml(subject, preheader, `${card(kind, user, pw, { assetBase, paste: false })}
+${footer(false)}`);
+  const pasteHtml = `<div style="margin:0;padding:0;">
+${card(kind, user, pw, { assetBase, paste: true })}
+${footer(true)}
+</div>`;
+  return { kind, subject, preheader, html, pasteHtml, text: loginText(kind, user, pw) };
+}
+
+/** The email page around a card: the head, the phone sizes, the hidden preheader and the soft grey page. */
+function pageHtml(subject, preheader, inner) {
+  return `<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="utf-8">
@@ -299,17 +310,126 @@ a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !importa
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.soft}" style="width:100%;background-color:${C.soft};">
 <tr><td class="outer" align="center" style="padding:32px 12px 36px 12px;">
 <!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
-${card(kind, user, pw, { assetBase, paste: false })}
-${footer(false)}
+${inner}
 <!--[if mso]></td></tr></table><![endif]-->
 </td></tr>
 </table>
 </body>
 </html>
 `;
+}
+
+// ---------- the new document notice (9 Oct 2026) ----------
+// After an admin uploads a report or an invoice, the admin page offers Copy notice email: this email, to paste
+// into a new email in Proton Mail. The portal itself never sends it. It says a document is waiting and links to the
+// portal; it never carries the document, a password or anything about money.
+
+// v1.2 (22 Oct 2026): the stored key "test-sheet" is unchanged; the customer reads it as a Report (a Field Service
+// Report, a boiler report, a test sheet), in the Reports column of the portal. Invoices sit in the Invoices column.
+export const NOTICE_TYPES = ["test-sheet", "invoice"];
+const NOTICE = {
+  "test-sheet": {
+    subject: "A new report is in your Chemtec portal",
+    preheader: "A new report for your account is in the Chemtec customer portal.",
+    intro: "A new report for your account is in your Chemtec customer portal.",
+    label: "Report",
+    where: "Log in with your account number and password, then look under Reports.",
+  },
+  invoice: {
+    subject: "A new invoice is in your Chemtec portal",
+    preheader: "A new invoice for your account is in the Chemtec customer portal.",
+    intro: "A new invoice for your account is in your Chemtec customer portal.",
+    label: "Invoice",
+    where: "Log in with your account number and password, then look under Invoices.",
+  },
+};
+
+function noticeRows(type, user, doc) {
+  const rows = [["Document", NOTICE[type].label]];
+  if (doc && doc.dateLabel) rows.push(["Date", doc.dateLabel]);
+  if (doc && doc.title) rows.push(["Title", doc.title]);
+  rows.push(["Account number", (user && user.loginName) || (doc && doc.accountNumber) || ""]);
+  return rows;
+}
+
+/** The plain text notice. */
+export function noticeText(type, user, doc) {
+  const lines = ["Hello " + firstName(user) + ",", "", NOTICE[type].intro, ""];
+  for (const [k, v] of noticeRows(type, user, doc)) lines.push(k + ": " + v);
+  lines.push("", "Portal: " + PORTAL_URL, "", NOTICE[type].where, "");
+  lines.push("Questions? Call us at " + OFFICE + " or email " + SERVICE_EMAIL + ".", "");
+  lines.push(COMPANY);
+  return lines.join("\n");
+}
+
+function noticeBox(rows, paste) {
+  const b = paste ? 16 : 20;
+  const out = rows.map(([k, v], i) => {
+    const top = i === 0 ? 18 : 14;
+    const bottom = i === rows.length - 1 ? 20 : 0;
+    const value = `<span style="font-family:${SANS};font-size:16px;line-height:24px;font-weight:700;color:${C.ink};${WRAP}">${esc(v)}</span>`;
+    return `<tr><td class="box" style="padding:${top}px ${b}px ${bottom}px ${b}px;">${label(k)}${value}</td></tr>`;
+  });
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+<tr><td bgcolor="${C.soft}" style="background-color:${C.soft};border:1px solid ${C.line};border-left:4px solid ${C.deep};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+${out.join("\n")}
+</table>
+</td></tr>
+</table>`;
+}
+
+function noticeCard(type, user, doc, { assetBase, paste }) {
+  const p = `font-family:${SANS};font-size:16px;line-height:26px;color:${C.text};`;
+  const x = paste ? 24 : 40;
+  const pad = (top, bottom) => `padding:${top}px ${x}px ${bottom}px ${x}px;`;
+  const tel = `<a href="tel:${OFFICE_TEL}" style="color:${C.deep};text-decoration:underline;white-space:nowrap;">${esc(OFFICE)}</a>`;
+  const mail = `<a href="mailto:${esc(SERVICE_EMAIL)}" style="color:${C.deep};text-decoration:underline;${WRAP}">${esc(SERVICE_EMAIL)}</a>`;
+  return `<table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${C.white}" style="width:100%;max-width:600px;background-color:${C.white};border:1px solid ${C.line};border-radius:6px;border-collapse:separate;">
+<tr><td class="px" style="${pad(28, 0)}">
+${header(assetBase, paste)}
+</td></tr>
+<tr><td class="px" style="${pad(20, 0)}">
+${aquaRule()}
+</td></tr>
+<tr><td class="px" style="${pad(28, 0)}${p}">
+<p style="margin:0 0 14px 0;${p}">Hello ${esc(firstName(user))},</p>
+<p style="margin:0;${p}">${esc(NOTICE[type].intro)}</p>
+</td></tr>
+<tr><td class="px" style="${pad(22, 0)}">
+${noticeBox(noticeRows(type, user, doc), paste)}
+</td></tr>
+<tr><td class="px" align="left" style="${pad(26, 0)}">
+${paste ? buttonCell() : buttonVml()}
+</td></tr>
+<tr><td class="px" style="${pad(24, 0)}${p}">
+<p style="margin:0;${p}">${esc(NOTICE[type].where)}</p>
+</td></tr>
+<tr><td class="px" style="${pad(14, 0)}font-family:${SANS};font-size:15px;line-height:24px;color:${C.muted};">
+<p class="help" style="margin:0;font-family:${SANS};font-size:15px;line-height:24px;color:${C.muted};">Questions? Call us at ${tel} or email ${mail}.</p>
+</td></tr>
+<tr><td class="px" style="${pad(24, 32)}">
+<p style="margin:0;font-family:${SANS};font-size:16px;line-height:24px;font-weight:700;color:${C.ink};">${esc(COMPANY)}</p>
+</td></tr>
+</table>`;
+}
+
+/**
+ * The new document notice for one customer.
+ *   type       "test-sheet" (a report) | "invoice"
+ *   user       { displayName, loginName } (the customer, as the admin API returns it)
+ *   doc        { dateLabel, title, accountNumber } (the document, as the admin API returns it)
+ *   assetBase  optional, for previews only; defaults to ASSET_BASE
+ * Returns { kind, subject, preheader, html, pasteHtml, text }. No password, no money, no attachment.
+ */
+export function renderNoticeEmail({ type, user, doc, assetBase } = {}) {
+  if (!NOTICE_TYPES.includes(type)) throw new Error("unknown notice type");
+  const n = NOTICE[type];
+  const html = pageHtml(n.subject, n.preheader, `${noticeCard(type, user, doc, { assetBase, paste: false })}
+${footer(false)}`);
   const pasteHtml = `<div style="margin:0;padding:0;">
-${card(kind, user, pw, { assetBase, paste: true })}
+${noticeCard(type, user, doc, { assetBase, paste: true })}
 ${footer(true)}
 </div>`;
-  return { kind, subject, preheader, html, pasteHtml, text: loginText(kind, user, pw) };
+  return { kind: "notice-" + type, subject: n.subject, preheader: n.preheader, html, pasteHtml, text: noticeText(type, user, doc) };
 }
