@@ -52,7 +52,7 @@
     <div class="auth-card">
       <h2>Your new password</h2>
       <p class="muted mb-0">Logged in as <b data-v="loginName"></b>.</p>
-      <form class="form" data-change-form novalidate>
+      <form class="form" data-change-form method="post" action="/api/change-password" novalidate>
         <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
         <div class="field">
           <label for="currentPassword">Current password</label>
