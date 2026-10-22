@@ -60,7 +60,7 @@
       <div class="admin-card">
         <h3>Add a customer</h3>
         <p>Name, email and account number. The account number is their username.</p>
-        <form class="form" data-add="customer" novalidate autocomplete="off">
+        <form class="form" data-add="customer" method="post" action="/api/admin/users" novalidate autocomplete="off">
           <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
           <div class="field"><label for="c-name">Name</label><input id="c-name" name="displayName" type="text" maxlength="80" required autocomplete="off"></div>
           <div class="field"><label for="c-email">Email</label><input id="c-email" name="email" type="email" maxlength="254" required autocomplete="off" spellcheck="false"></div>
@@ -79,7 +79,7 @@
       <div class="admin-card">
         <h3>Add an admin</h3>
         <p>Admins can add customers and admins, reset passwords, and turn logins off or on.</p>
-        <form class="form" data-add="admin" novalidate autocomplete="off">
+        <form class="form" data-add="admin" method="post" action="/api/admin/users" novalidate autocomplete="off">
           <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
           <div class="field"><label for="a-user">Admin username</label><span class="hint" id="a-user-hint">3 to 40 characters, lowercase letters and numbers. A first name works.</span><input id="a-user" name="username" type="text" maxlength="40" required autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="a-user-hint"></div>
           <div class="field"><label for="a-name">Name</label><input id="a-name" name="displayName" type="text" maxlength="80" required autocomplete="off"></div>
