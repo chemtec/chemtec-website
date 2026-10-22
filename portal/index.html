@@ -60,7 +60,7 @@
     <div class="auth-card">
       <h2>Log in</h2>
       <p class="muted mb-0">Use the account number and password Chemtec sent you.</p>
-      <form class="form" data-login-form novalidate>
+      <form class="form" data-login-form method="post" action="/api/login" novalidate>
         <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
         <div class="field">
           <label for="username">Account number</label>
