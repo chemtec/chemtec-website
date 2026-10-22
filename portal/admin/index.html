@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Portal admin | Chemtec Products Company</title>
-<meta name="description" content="Chemtec staff: logins for the customer portal.">
+<meta name="description" content="Chemtec staff: logins and customer documents for the customer portal.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://chemtecpro.com/portal/admin/">
 <meta name="theme-color" content="#ffffff">
@@ -41,8 +41,8 @@
 <section class="page-hero"><div class="wrap">
   <p class="eyebrow">Customer portal &middot; Chemtec staff</p>
   <h1>Portal <span class="accent">admin.</span></h1>
-  <p class="lead mb-0">Add customer logins, reset passwords and see exactly where it all lives on Netlify.</p>
-  <ul class="jump" aria-label="On this page"><li><a href="#logins">Logins</a></li><li><a href="#netlify">The Netlify side</a></li><li><a href="/portal/">Customer view</a></li><li><a href="/portal/change-password/">Change my password</a></li><li><a href="/portal/login/" data-logout>Log out</a></li></ul>
+  <p class="lead mb-0">Add customer logins, reset passwords, upload invoices and reports, and see exactly where it all lives on Netlify.</p>
+  <ul class="jump" aria-label="On this page"><li><a href="#logins">Logins</a></li><li><a href="#customer-documents">Documents</a></li><li><a href="#netlify">The Netlify side</a></li><li><a href="/portal/">Customer view</a></li><li><a href="/portal/change-password/">Change my password</a></li><li><a href="/portal/login/" data-logout>Log out</a></li></ul>
 </div></section>
 
 <section class="section" id="logins"><div class="wrap">
@@ -78,7 +78,7 @@
       </div>
       <div class="admin-card">
         <h3>Add an admin</h3>
-        <p>Admins can add customers and admins, reset passwords, and turn logins off or on.</p>
+        <p>Admins can add customers and admins, reset passwords, turn logins off or on, and upload or delete customer documents.</p>
         <form class="form" data-add="admin" method="post" action="/api/admin/users" novalidate autocomplete="off">
           <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
           <div class="field"><label for="a-user">Admin username</label><span class="hint" id="a-user-hint">3 to 40 characters, lowercase letters and numbers. A first name works.</span><input id="a-user" name="username" type="text" maxlength="40" required autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="a-user-hint"></div>
@@ -137,16 +137,79 @@
   </div>
 </div></section>
 
-<section class="section soft" id="netlify"><div class="wrap">
+<section class="section soft" id="customer-documents"><div class="wrap">
   <div data-view="in" hidden>
     <div class="section-head">
-      <p class="eyebrow">B. The Netlify side</p>
+      <p class="eyebrow">B. Customer documents</p>
+      <h2>Upload invoices and reports.</h2>
+      <p>Each PDF goes to one customer's portal, an invoice under Invoices and a report under Reports, and only that customer sees it. PDF only, up to 4 MB each. The portal does not tell the customer for you: after an upload, copy the notice email into a new email in Proton Mail.</p>
+    </div>
+
+    <div class="admin-grid">
+      <div class="admin-card">
+        <h3>Upload a document</h3>
+        <p>Pick the customer, Invoice or Report, and the date, then the PDF.</p>
+        <form class="form" data-upload method="post" action="/api/admin/files" novalidate autocomplete="off">
+          <div class="field">
+            <label for="f-find">Customer</label>
+            <span class="hint" id="f-find-hint">Type an account number or a name, then pick them in the list.</span>
+            <input id="f-find" type="search" data-files-find maxlength="80" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="f-find-hint" aria-controls="f-account" placeholder="Account number or name">
+            <select id="f-account" name="account" data-files-account aria-label="Customer" required><option value="">Choose a customer</option></select>
+          </div>
+          <fieldset class="field seg">
+            <legend>Type</legend>
+            <label class="seg-opt"><input type="radio" name="type" value="invoice"> <span>Invoice<small>A PDF copy</small></span></label>
+            <label class="seg-opt"><input type="radio" name="type" value="test-sheet"> <span>Report<small>Field Service Report, boiler report, test sheet</small></span></label>
+          </fieldset>
+          <div class="field"><label for="f-date">Date</label><span class="hint" id="f-date-hint">The date on the document.</span><input id="f-date" name="date" type="date" min="1982-01-01" required aria-describedby="f-date-hint"></div>
+          <div class="field"><label for="f-title">Title <span class="opt">(optional)</span></label><span class="hint" id="f-title-hint">For example: Boiler room, monthly test. Leave it blank and the list shows the type and the date.</span><input id="f-title" name="title" type="text" maxlength="120" autocomplete="off" aria-describedby="f-title-hint"></div>
+          <div class="field"><label for="f-file">PDF file</label><span class="hint" id="f-file-hint">PDF only, up to 4 MB, the most the website takes in one upload. A scanned report is usually well under 1 MB; if yours is bigger, scan it again in black and white at 200 dpi.</span><input id="f-file" name="file" type="file" accept="application/pdf,.pdf" required aria-describedby="f-file-hint"></div>
+          <p class="msg" data-msg role="alert" tabindex="-1" hidden></p>
+          <div class="upload-progress" data-progress hidden><progress max="100" value="0" data-progress-bar aria-label="Upload progress"></progress><span data-progress-text aria-live="polite">Uploading...</span></div>
+          <button class="btn btn-primary" type="submit">Upload</button>
+        </form>
+      </div>
+      <div class="admin-card">
+        <h3 data-files-heading>Documents</h3>
+        <p data-files-sub>Pick a customer to see their documents.</p>
+        <p class="msg" data-files-msg role="status" tabindex="-1" hidden></p>
+        <ul class="afiles" data-files-list></ul>
+      </div>
+    </div>
+
+    <div class="once" data-notice tabindex="-1" hidden>
+      <h3 data-notice-title>Uploaded</h3>
+      <p class="muted mb-0" data-notice-sub></p>
+      <p class="envelope" data-notice-envelope></p>
+      <div class="btn-row once-actions">
+        <button class="btn btn-primary" type="button" data-notice-copy>Copy notice email</button>
+        <a class="btn btn-outline" data-notice-mail href="#">Open in my email app (plain text)</a>
+      </div>
+      <p class="warn" data-notice-status role="status" aria-live="polite"></p>
+      <p class="preview-toggle"><button class="link-btn" type="button" data-notice-preview-btn aria-expanded="false" aria-controls="notice-preview">Preview the notice email</button></p>
+      <div class="preview" id="notice-preview" data-notice-preview hidden>
+        <div class="preview-bar"><span class="preview-subject" data-notice-subject></span><span class="preview-sizes" role="group" aria-label="Preview width"><button type="button" data-notice-width="computer" aria-pressed="true">Computer</button><button type="button" data-notice-width="phone" aria-pressed="false">Phone</button></span></div>
+        <div class="preview-stage"><iframe title="Preview of the notice email" data-notice-frame sandbox="allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe></div>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-outline" type="button" data-notice-done>Done, hide it</button>
+      </div>
+      <p class="warn">The portal does not send this notice for you. Copy notice email puts the Chemtec email on your clipboard: paste it into a new email in Proton Mail, add their address and the subject shown above, and send it. It says a new document is in their portal; the PDF itself stays in the portal.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="section" id="netlify"><div class="wrap">
+  <div data-view="in" hidden>
+    <div class="section-head">
+      <p class="eyebrow">C. The Netlify side</p>
       <h2>Where this lives.</h2>
       <p>Plain words first, then the exact Netlify name or call in code type.</p>
     </div>
     <div class="lives">
       <div><div><b>The website and the portal</b><p>Run on Netlify, in the project chemtecpro.</p></div><div class="mono" data-site>Netlify project: chemtecpro</div></div>
       <div><div><b>Where logins are kept</b><p>A private Netlify Blobs store called portal-users. One record per login, filed under the account number (an admin under their username), in lowercase.</p></div><div class="mono">getStore({ name: "portal-users", consistency: "strong" })<br>store portal-users, key = account number in lowercase, for example 0001</div></div>
+      <div><div><b>Where customer documents are kept</b><p>A private Netlify Blobs store called portal-files. Each PDF and its record (type, date, title, size, who uploaded it and when, how often the customer opened it), filed under the customer's account number. Never public: only the portal's own functions read it, after checking the login. A customer gets only their own; only an admin uploads or deletes. Deleting a customer's login deletes their documents too.</p></div><div class="mono">getStore({ name: "portal-files", consistency: "strong" })<br>doc/&lt;account&gt;/&lt;id&gt; the record, pdf/&lt;account&gt;/&lt;id&gt; the PDF<br>id = 32 random hex characters; PDF only (%PDF-), up to 4 MB; 60 uploads an hour per admin, 120 opens per 10 minutes per login</div></div>
       <div><div><b>Passwords</b><p>Kept only as a scrambled one way hash. Nobody can read a password back, not even on this page.</p></div><div class="mono">node:crypto scrypt (N=32768, r=8, p=1), random 16 byte salt, field passwordHash</div></div>
       <div><div><b>Login emails</b><p>The Chemtec branded login email. The site sends it through Resend only when automatic email is set up (RESEND_API_KEY) and you tick Email the login now or press Send; otherwise you copy it into your own email. The temporary password goes into that one email and is never kept. Up to 30 sends an hour per admin.</p></div><div class="mono">netlify/lib/email-templates.mjs (the email) and netlify/lib/mailer.mjs (the send)<br>POST https://api.resend.com/emails, Authorization: Bearer &lt;RESEND_API_KEY&gt;<br>from PORTAL_FROM, reply_to PORTAL_REPLY_TO<br>store portal-mail, key sends-&lt;admin username&gt; (send times only)</div></div>
       <div><div><b>Staying logged in</b><p>A signed cookie that lasts 8 hours. Turning a login off, resetting it or deleting it ends its sessions at once. 10 wrong passwords lock that login for 15 minutes.</p></div><div class="mono">cookie __Host-chemtec_session, HMAC SHA-256 signed with SESSION_SECRET; HttpOnly, Secure, SameSite=Lax, Path=/</div></div>
@@ -160,6 +223,9 @@
           <li><span>DELETE /api/admin/users/:username</span><span>netlify/functions/admin-users.mjs</span></li>
           <li><span>GET /api/admin/store</span><span>netlify/functions/admin-store.mjs</span></li>
           <li><span>GET /api/documents</span><span>netlify/functions/documents.mjs</span></li>
+          <li><span>GET /api/files, GET /api/files/:id</span><span>netlify/functions/files.mjs</span></li>
+          <li><span>GET, POST /api/admin/files</span><span>netlify/functions/admin-files.mjs</span></li>
+          <li><span>GET, DELETE /api/admin/files/:account/:id</span><span>netlify/functions/admin-files.mjs</span></li>
           <li><span>GET, POST /.netlify/functions/pay</span><span>netlify/functions/pay.mjs</span></li>
         </ul></div>
       <div><div><b>The gate in front of the documents</b><p>A Netlify Edge Function checks the login before any PDF, the old documents page or this admin page is served. No login, no file.</p></div><div class="mono">netlify/edge-functions/portal-gate.mjs, path /* (only the site's own styles, scripts, images and video in /assets/ skip it; nothing in /assets/docs/ does)</div></div>
@@ -169,7 +235,7 @@
     <h3 style="margin:44px 0 6px">What you did this session</h3>
     <p class="muted">Each action on this page, with the Netlify call behind it. Kept in this browser tab only, and never with a password.</p>
     <ul class="log" data-log></ul>
-    <p class="log-empty" data-log-empty>Nothing yet. Add a login or reset a password and it shows here.</p>
+    <p class="log-empty" data-log-empty>Nothing yet. Add a login, reset a password or upload a document and it shows here.</p>
 
     <div class="section-tools" style="margin-top:44px">
       <h3 class="mb-0">What is in the store</h3>
