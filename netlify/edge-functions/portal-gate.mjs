@@ -109,12 +109,14 @@ export const config = {
   // ride along (no "%", no ";", no "#", no "/" inside a file name, no segment that starts with a dot):
   //   the site's own assets   a file directly in /assets/ or /assets/people/ that ends in .css, .js, an image,
   //                           video or a font (so nothing in /assets/docs/, not even an image, skips the gate)
-  //   the portal API          each /api/ function checks the session itself
+  //   the portal API          each /api/ function checks the session itself (customer documents too, 9 Oct 2026:
+//                           /api/files and /api/admin/files read the private store "portal-files" only after the
+//                           session check; a customer's own documents only, upload and delete admins only)
   //   the pay function        /.netlify/functions/pay (public by design: pay by bank)
   pattern: "^/.*$",
   excludedPattern: [
     "^/assets/(people/)?[A-Za-z0-9_-][A-Za-z0-9_.-]*\\.(css|js|png|jpg|jpeg|webp|gif|svg|ico|mp4|woff|woff2)$",
-    "^/api/(login|logout|me|change-password|documents|admin/store|admin/users(/[A-Za-z0-9_-][A-Za-z0-9._-]{0,39}(/(reset|disable|enable|email))?)?)$",
+    "^/api/(login|logout|me|change-password|documents|files(/[a-f0-9]{32})?|admin/store|admin/files(/[a-z0-9][a-z0-9._-]{0,39}/[a-f0-9]{32})?|admin/users(/[A-Za-z0-9_-][A-Za-z0-9._-]{0,39}(/(reset|disable|enable|email))?)?)$",
     "^/\\.netlify/functions/pay$",
   ],
 };
