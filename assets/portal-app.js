@@ -1,4 +1,10 @@
 /* Chemtec customer portal: log in, choose a password, the customer page, log out (8 Oct 2026).
+   Your documents (9 Oct 2026): the test sheets and invoices Chemtec uploaded for this login, newest first, from
+   GET /api/files; each opens as a PDF from /api/files/<id> in a new tab.
+   v1.2 (22 Oct 2026, Alex): right below Pay, two columns: Invoices (type "invoice") on the left and Reports (the stored
+   type "test-sheet": Field Service Reports, boiler reports, test sheets) on the right, each newest first. The safety
+   data sheets, manuals and bulletins sit in a <details> accordion, closed until opened; an address that points into
+   it (#documents, #docs-...) opens it.
    Talks only to this site's own /api/ functions. The session is an HttpOnly cookie this script never sees.
    Nothing secret is in this file. */
 (function () {
@@ -223,10 +229,14 @@
       for (var a = 0; a < acct.length; a++) acct[a].hidden = u.role !== 'customer';
       var adm = document.querySelectorAll('[data-if="admin"]');
       for (var k = 0; k < adm.length; k++) adm[k].hidden = u.role !== 'admin';
+      var cus = document.querySelectorAll('[data-if="customer"]');
+      for (var c = 0; c < cus.length; c++) cus[c].hidden = u.role !== 'customer';
       if (params.get('notice') === 'staff-only') show(document.querySelector('[data-notice]'), 'The admin page is for Chemtec staff only.', 'bad');
       setView('in');
       wireLogout();
+      loadMyFiles(u, scrollToHash);
       loadDocuments(scrollToHash);
+      openDocsForHash();
       setTimeout(scrollToHash, 30);
     });
   }
@@ -253,6 +263,118 @@
   }
   if (page && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
 
+  // the safety data sheets accordion: open it when the address (or a link on this page) points into it
+  var docsAcc = document.querySelector('[data-docs-acc]');
+  function pointsIntoDocs(hash) {
+    if (!docsAcc || !hash || hash.length < 2) return false;
+    var id = hash.slice(1);
+    if (id === 'documents') return true;
+    var t = document.getElementById(id);
+    return !!(t && docsAcc.contains(t)) || /^docs-[a-z0-9\-]+$/i.test(id);
+  }
+  function openDocsForHash() {
+    if (docsAcc && pointsIntoDocs(window.location.hash)) docsAcc.open = true;
+  }
+  if (page && docsAcc) {
+    window.addEventListener('hashchange', function () {
+      if (!pointsIntoDocs(window.location.hash)) return;
+      docsAcc.open = true;
+      userScrolled = false;
+      setTimeout(scrollToHash, 0);
+    });
+    // a jump link to the address already shown fires no hashchange, so open it on the click as well
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (a && pointsIntoDocs(a.getAttribute('href'))) docsAcc.open = true;
+    });
+  }
+
+  function kb(n) {
+    n = Number(n) || 0;
+    if (n >= 1024 * 1024) return (n / (1024 * 1024)).toFixed(1).replace(/\.0$/, '') + ' MB';
+    return Math.max(1, Math.round(n / 1024)) + ' KB';
+  }
+
+  // Your documents: this login's own invoices (left column) and reports (right column), newest first; an admin sees
+  // a pointer to the admin page instead. A long column shows the newest few and a Show all button.
+  var FIRST_SHOWN = 8;
+  var COLS = {
+    invoice: { one: 'invoice', many: 'invoices' },
+    report: { one: 'report', many: 'reports' }
+  };
+  function colFor(d) { return d.type === 'invoice' ? 'invoice' : 'report'; } // anything not an invoice is a report
+
+  function fileRow(d) {
+    var li = el('li');
+    var a = el('a');
+    a.href = d.href;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    var main = el('span', 'fmain');
+    main.appendChild(el('b', null, d.title || d.dateLabel));
+    if (d.title) main.appendChild(el('span', 'fdate', d.dateLabel));
+    a.appendChild(main);
+    a.appendChild(el('span', 'dl', 'PDF \u00b7 ' + kb(d.size)));
+    a.setAttribute('aria-label', d.typeLabel + ', ' + d.dateLabel + (d.title ? ', ' + d.title : '') + ', PDF, ' + kb(d.size) + ', opens in a new tab');
+    li.appendChild(a);
+    return li;
+  }
+
+  function fillColumn(key, docs) {
+    var list = document.querySelector('[data-files="' + key + '"]');
+    var empty = document.querySelector('[data-files-empty="' + key + '"]');
+    var n = document.querySelector('[data-files-n="' + key + '"]');
+    var more = document.querySelector('[data-files-more="' + key + '"]');
+    if (!list) return;
+    list.textContent = '';
+    docs.forEach(function (d, i) {
+      var li = fileRow(d);
+      if (i >= FIRST_SHOWN) li.hidden = true;
+      list.appendChild(li);
+    });
+    list.hidden = docs.length === 0;
+    if (empty) empty.hidden = docs.length > 0;
+    if (n) n.textContent = docs.length ? docs.length + ' ' + (docs.length === 1 ? COLS[key].one : COLS[key].many) : '';
+    if (more) {
+      more.hidden = docs.length <= FIRST_SHOWN;
+      more.textContent = 'Show all ' + docs.length + ' ' + COLS[key].many;
+      more.onclick = function () {
+        var rows = list.children;
+        for (var i = 0; i < rows.length; i++) rows[i].hidden = false;
+        more.hidden = true;
+        if (rows[FIRST_SHOWN]) { var link = rows[FIRST_SHOWN].querySelector('a'); if (link) link.focus(); }
+      };
+    }
+  }
+
+  function loadMyFiles(user, done) {
+    var cols = document.querySelector('[data-files-cols]');
+    if (!cols) return;
+    var status = document.querySelector('[data-files-status]');
+    var help = document.querySelector('[data-files-help]');
+    var adminNote = document.querySelector('[data-files-admin]');
+    if (user && user.role === 'admin') {
+      if (status) status.hidden = true;
+      if (adminNote) adminNote.hidden = false;
+      return;
+    }
+    api('GET', '/api/files').then(function (res) {
+      if (!res.ok || !res.data || !res.data.documents) {
+        if (res.status === 401) { window.location.assign('/portal/login/?next=' + encodeURIComponent('/portal/#your-documents') + '&expired=1'); return; }
+        if (status) { status.textContent = 'Your invoices and reports did not load. Refresh the page, or call ' + OFFICE + ' and we will send what you need.'; status.hidden = false; }
+        return;
+      }
+      if (status) status.hidden = true;
+      var split = { invoice: [], report: [] };
+      res.data.documents.forEach(function (d) { split[colFor(d)].push(d); }); // the server already sends newest first
+      fillColumn('invoice', split.invoice);
+      fillColumn('report', split.report);
+      cols.hidden = false;
+      if (help) help.hidden = false;
+      if (done) setTimeout(done, 30);
+    });
+  }
+
   function loadDocuments(done) {
     var box = document.querySelector('[data-docs]');
     if (!box) return;
@@ -260,6 +382,8 @@
     api('GET', '/api/documents').then(function (res) {
       if (!res.ok || !res.data || !res.data.groups) {
         if (status) { status.textContent = 'The documents list did not load. Refresh the page, or call ' + OFFICE + ' and we will send what you need.'; status.hidden = false; }
+        var t = document.querySelector('[data-docs-total]');
+        if (t) t.textContent = 'The list did not load. Open for details.';
         return;
       }
       if (status) status.hidden = true;
@@ -291,6 +415,8 @@
       var find = document.querySelector('[data-docs-find]');
       var none = document.querySelector('[data-docs-none]');
       var count = document.querySelector('[data-docs-count]');
+      var total = document.querySelector('[data-docs-total]');
+      if (total) total.textContent = all.length + (all.length === 1 ? ' document' : ' documents');
       function filter() {
         var v = find ? squash(find.value) : '';
         var shown = 0;
